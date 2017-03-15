@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html  ng-app="dashboardConfigApp" ng-controller="editDashboardConfigCtrl">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset='utf-8'">
+    <title>E-Report丨Dashboard配置</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/scripts/utils/security.js"></script>
+    <script src="/lib/angular/angular.js"></script>
+    <script src="/lib/angular-sanitize/angular-sanitize.js"></script>
+
+    <script src="/lib/ace/ace.js"></script>
+    <script src="/lib/ace/mode-css.js"></script>
+    <script src="/lib/ace/mode-javascript.js"></script>
+    <script src="/lib/ace/mode-sql.js"></script>
+    <script src="/lib/ace/ui-ace.js"></script>
+    <script src="/lib/ace/theme-chrome.js"></script>
+
+    <script src="/lib/angular-messages/angular-messages.js"></script>
+    <script type="text/javascript" src="/lib/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <link rel="stylesheet" type="text/css" href="/lib/angular-toastr/dist/angular-toastr.css"/>
+    <script src="/scripts/utils/jquery.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.messages_cn.js"></script>
+
+    <script src="/lib/angular-ui-select/dist/select.js"></script>
+    <link rel="stylesheet" href="/lib/angular-ui-select/dist/select.css">
+
+    <script src="/lib/angular-ui-grid/ui-grid.js"></script>
+    <link rel="stylesheet" href="/lib/angular-ui-grid/ui-grid.css">
+
+    <script src="/lib/underscore/underscore.js"></script>
+
+    <script src="/scripts/utils/jquery-ui-1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/scripts/utils/jquery-ui-1.11.4/jquery-ui.css">
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="/scripts/utils/jquery-validate.bootstrap-tooltip.js"></script>
+
+    <script src="/lib/gridstack/gridstack.js"></script>
+    <link rel="stylesheet" href="/lib/gridstack/gridstack.css">
+
+    <script src="/lib/gridstack-angular/gridstack-angular.js"></script>
+
+    <link rel="stylesheet" href="/lib/yamm3/yamm.css">
+
+
+    <script src="/scripts/components/conditionGrid.js"></script>
+ <script src="/scripts/components/detailGrid.js"></script>
+
+
+    <script src="/lib/ng-dialog/ngDialog.js"></script>
+    <link rel="stylesheet" href="/lib/ng-dialog/ngDialog.css">
+    <link rel="stylesheet" href="/lib/ng-dialog/ngDialog-theme-default.css">
+    <script src = "/scripts/dashboardConfig/editDashboardConfigCtrl.js"></script>
+    <script src = "/scripts/dashboardConfig/editPanelConfigCtrl.js"></script>
+    <script src="/scripts/eeError.js"></script>
+
+
+
+
+    <script src="/scripts/components/directives.js"></script>
+
+    <script src="/scripts/common/chartSampleUtils.js"></script>
+
+    <script src="/lib/echarts/echarts.min.js"></script>
+    <script src="/lib/echarts/macarons.js"></script>
+    <script src="/lib/echarts/dark.js"></script>
+    <script src="/lib/echarts/infographic.js"></script>
+    <script src="/lib/echarts/roma.js"></script>
+    <script src="/lib/echarts/shine.js"></script>
+    <script src="/lib/echarts/vintage.js"></script>
+
+    <script src="/lib/echarts/dcs.js"></script>
+
+
+    <script src="/scripts/common/chartUtils.js"></script>
+    <script src="/scripts/common/commonUtils.js"></script>
+
+    <style literal-content="dashboardConfig.css">
+    </style>
+</head>
+<script>
+    window.dashboardConfig = <%- JSON.stringify(dashboardConfig);%>;
+
+</script>
+<style>
+    .ee-overflow-visible .ui-grid-viewport {
+        overflow: visible !important;
+    }
+
+    .config-button {
+        height:30px;
+        width:50px;
+        position:absolute;
+        top:0;
+        right:30px;
+    }
+    .delete-button {
+        height:30px;
+        width:30px;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .copy-button{
+        height:30px;
+        width:50px;
+        position:absolute;
+        top:0;
+        right:80px;
+    }
+
+    .active-checkbox{
+        height:20px;
+        width:20px;
+        position:absolute;
+        top:2px;
+        right:140px;
+    }
+
+    .dashboard-container {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        border-left: 1px solid #d4d4d4;
+        border-bottom: 1px solid #d4d4d4;
+        border-right: 1px solid #d4d4d4;
+    }
+
+    .ngdialog.ngdialog-theme-default .ngdialog-content {
+        overflow: auto;
+        background-color: white; !important;
+    }
+
+    .ngdialog-overlay {
+        pointer-events: none;
+    }
+
+    #sqlEditorWrap {
+        min-height: 200px;
+    }
+
+    .jsEditorPanel>.ace_editor {
+        height: 400px;
+    }
+
+    .menu-btn {
+        padding-left: 10px;
+        padding-top: 5px;
+    }
+
+    input[type=checkbox] {
+        width: 20px;
+        height: 20px;
+    }
+
+</style>
+
+<body>
+
+<% include ../menubar %>
+
+<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1  content-panel">
+
+    <form name="connectionForm" id="dataConnectionForm">
+        <h2 class="group-head"><b>概要信息</b></h2>
+        <div class="input-group margin-20 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-12 col-xs-12" style="margin-top:5px;padding: 0" required>Dashboard名称</div>
+            <div class="col-md-10 col-sm-12 col-xs-12" style="margin-left:-10px;">
+                <input type="text" ee-error="$error.reportName" class="form-control" ng-model="dashboardConfig.reportName" id="f1" name="reportName">
+            </div>
+        </div>
+
+        <div class="margin-20">
+            <label class="col-md-2 col-sm-12 col-xs-12" style="margin-top:5px;padding: 0" required>
+               应用系统
+            </label>
+            <div class="col-md-10 col-sm-12 col-xs-12" style="margin-left:-10px;">
+                <ui-select ng-model="dashboardConfig.externalSystem" ee-error="$error.externalSystem" theme="bootstrap" append-to-body="true" multiple="true" style="width: 100%">
+                    <ui-select-match>{{$item.sysName}}</ui-select-match>
+                    <ui-select-choices repeat="item._id as item in externalSystems">
+                        <div>{{item.sysName}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+         </div>
+        <div class="clearfix"></div>
+        <div style="padding-top:20px;">
+            <label class="col-md-2 col-sm-12 col-xs-12" style="margin-top:5px;margin-left:-5px;padding: 0">
+               权限控制
+            </label>
+            <div class="col-md-10 col-sm-12 col-xs-12" style="margin-left:-5px;">
+                <ui-select ng-model="dashboardConfig.authorizedUser" ee-error="$error.authorizedUser" theme="bootstrap" append-to-body="true" multiple="true" style="width: 100%">
+                    <ui-select-match>{{$item.Name}}</ui-select-match>
+                    <ui-select-choices repeat="item._id as item in authorizedUsers">
+                        <div>{{item.Name}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="input-group margin-20 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-12 col-xs-12" style="margin-top:5px;padding: 0">备注</div>
+            <div class="col-md-10 col-sm-12 col-xs-12" style="margin-left:-10px;">
+                <textarea placeholder="备注(可选)" class="form-control" name="remark" cols="20" rows="1" ng-model="dashboardConfig.remark"></textarea>
+            </div>
+        </div>
+
+        <div class="input-group margin-20 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-12 col-xs-12" style="margin-top:5px;padding: 0">备忘</div>
+            <div class="col-md-10 col-sm-12 col-xs-12" style="margin-left:-10px;">
+                <textarea placeholder="备忘(设计人员备忘)" class="form-control" name="remark" cols="20" rows="1" ng-model="dashboardConfig.internalRemark"></textarea>
+            </div>
+        </div>
+
+        <div class="margin-20">
+            <label class="col-md-2 col-sm-12 col-xs-12" style="margin-top:10px;padding: 0" required>
+                语言
+            </label>
+            <div class="col-md-10 col-sm-12 col-xs-12" style="margin-left:-10px;">
+                <ui-select ng-model="defaultLanguage" ee-error="$error.language" ng-change="showChange(defaultLanguage)" theme="bootstrap" append-to-body="true" style="width: 100%">
+                    <ui-select-match>{{$select.selected}}</ui-select-match>
+                    <ui-select-choices repeat="item as item in languages">
+                        <div>{{item}}</div>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="input-group margin-20 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-3 col-xs-3" style="margin-top:5px;padding: 0">URL</div>
+            <div class="col-md-10 col-sm-9 col-xs-9" style="word-break: break-all;">
+                <div ng-repeat="externalSystem in dashboardConfig.externalSystem">
+                    <a ng-href="{{getPreviewLink(externalSystem)}}" target="_blank">
+                        {{dashboardBaseUrl}}/showReport?sysName=<span class="url-placeholder">{{getSystemProperty(externalSystem, 'sysName')}}</span>&reportName={{dashboardConfig.reportName}}&accessKey=<span class="url-placeholder">{{getSystemProperty(externalSystem, 'accessKey')}}</span>&defaultFilter=<span class="url-placeholder">{{getDefaultFilter(externalSystem)}}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group margin-20 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-3 col-xs-3" style="margin-top:5px;padding: 0">激活</div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input style="padding-top: 5px;width:20px;height: 20px;" type="checkbox" ng-model="dashboardConfig.active"/>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-3" style="margin-top:5px;padding: 0">激活全部子表</div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input style="padding-top: 5px;width:20px;height: 20px;" type="checkbox" ng-model="dashboardConfig.activePanels"/>
+            </div>
+        </div>
+
+        <!--new adds to set loading or not when preview pages-->
+        <div class="input-group margin-20 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-2 col-sm-3 col-xs-3" style="margin-top: 5px; padding: 0;">预览时直接加载图表</div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <input style="padding-top: 5px; width: 20px; height: 20px;" type="checkbox" ng-model="dashboardConfig.autoShow" />
+            </div>
+        </div>
+        <!--ends-->
+
+        <h2 class="group-head"><b>Dashboard条件</b></h2>
+
+        <div>
+            <condition-grid details="dashboardConfig.condition"></condition-grid>
+        </div>
+
+        <h2 class="group-head"><b>Dashboard布局</b></h2>
+
+        <div class="input-group col-md-12 col-sm-12 col-xs-12">
+            <div class="btn-toolbar grid-toolbar" role="toolbar" style="background-color: #f2f2f2">
+                <div class="pull-left">
+                    <div class="dropdown" dropdown>
+                        <div href="#" class="dropdown-toggle menu-btn fa fa-columns" data-toggle="dropdown">布局</div>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="yamm-content">
+                                    <div style="width: 350px;">
+                                        <div style="margin: 10px;display: inline-block;" ng-repeat="layout in layouts">
+                                            <div style="padding:2px;" class="selectable" ng-click="selectLayout(layout)">
+                                                <image ng-src="{{layout.image}}"></image>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pull-left">
+                    <div class="dropdown" dropdown>
+                        <div href="#" class="dropdown-toggle menu-btn fa fa-magic" data-toggle="dropdown">主题</div>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="yamm-content">
+                                    <div style="width: 270px;">
+                                        <div style="margin: 10px;display: inline-block;" ng-repeat="theme in themes">
+                                            <div style="padding:2px;" class="selectable" ng-click="selectTheme(theme)">
+                                                <image ng-src="{{theme.image}}"></image>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pull-left">
+                    <div class="dropdown keep-open" dropdown>
+                        <div href="#" class="dropdown-toggle menu-btn fa fa-pencil" data-toggle="dropdown">CSS</div>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="yamm-content">
+                                    <div style="width: 550px;">
+                                        <textarea ui-ace="{mode:'css'}" ng-model="dashboardConfig.css" style="width: 100%;"></textarea>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pull-right">
+                    <button type="button" class="menu-btn pasteIcon fa fa-clipboard" ng-click="focusTextarea()" style="background-color: #f2f2f2;padding-top:10px;">粘贴</button>
+                </div>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" >
+                            <div class="modal-header"style="border-bottom: 0px;height:50px">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title" id="myModalLabel" style="text-align:center;">请勿关闭当前弹框并按ctrl+v进行粘贴</h4>
+                            </div>
+                            <textarea id="pasteText"  ng-model="myValue" ng-change="pastePanel()" style="position:absolute;top:-100px;width:100%;height:20px;overflow:hidden;resize:none;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="pull-right">
+                    <button type="button" class="menu-btn fa fa-plus-circle" ng-click="addPanel()" style="background-color: #f2f2f2">增加</button>
+                </div>
+            </div>
+            <div class="col-md-12 dashboard-container">
+                <div style="min-height: 600px">
+                    <div gridstack="gridstack" class="grid-stack grid1" options="options">
+                        <div gridstack-item ng-repeat="w in dashboardConfig.panels"
+                             class="grid-stack-item dashboard-panel" gs-item-x="w.frame.x" gs-item-y="w.frame.y"
+                             gs-item-width="w.frame.width" gs-item-height="w.frame.height"
+                             gs-item-autopos="1">
+                            <div class="grid-stack-item-content">
+                                <!--x:{{w.frame.x}},y:{{w.frame.y}},w:{{w.frame.width}},h:{{w.frame.height}}{{w._id}}-->
+                                <panel-preview panel-config="w" config-panel="configPanel"
+                                               delete-panel="deletePanel" copy-panel="copyPanel">
+                                </panel-preview>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--<div  class="col-md-12">-->
+            <!--<textarea style="width: 100%;height: 300px;">{{getFrames()}}</textarea>-->
+        <!--</div>-->
+
+        <div class="col-md-8 col-md-offset-2 navbar-default navbar-fixed-bottom">
+            <button type="button" class="btn btn-sm btn-primary col-md-1 pull-right" style="margin-right: 4%"
+                    ng-click="submitForm()">保存</button>
+            <button type="button" class="btn btn-sm col-md-1 pull-right" style="margin-right: 4%" ng-show="dashboardConfig.active"
+                    ng-click="preview()">预览</button>
+        </div>
+    </form>
+</div>
+</div>
+<script>
+    $('.dropdown.keep-open').on({
+        "shown.bs.dropdown": function() {
+            this.closable = false;
+        },
+        "click":             function(e) {
+            this.closable = $(e.target).hasClass('dropdown-toggle');
+        },
+        "hide.bs.dropdown":  function() {
+            return this.closable;
+        }
+    });
+</script>
+</body>
+</html>
