@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html ng-app="viewDashboardApp" ng-controller="viewDashboardCtrl">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>E-Report丨Dashboard</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/lib/bootstrap.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/lib/gridstack/gridstack.css">
+    <link rel="stylesheet" href="/scripts/utils/jquery-ui-1.11.4/jquery-ui.css">
+    <link rel="stylesheet" href="/lib/angular-ui-select/dist/select.css">
+    <link rel="stylesheet" type="text/css" href="/lib/angular-toastr/dist/angular-toastr.css"/>
+    <link rel="stylesheet" href="/lib/angular-ui-grid/ui-grid.css">
+    <link rel="stylesheet" href="/lib/ng-dialog/ngDialog.css">
+    <link rel="stylesheet" href="/lib/ng-dialog/ngDialog-theme-default.css">
+    <link rel="stylesheet" href="/scripts/utils/jquery-ui-1.11.4/jquery-ui.css">
+
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/moment/moment.min.js"></script>
+
+    <script>
+        window.dashboardConfig = <%- JSON.stringify(ReportInfo)%>;
+        window.filter = <%- JSON.stringify(filter)%>;
+    </script>
+
+    <script src='/resource/text.<%- ReportInfo.language%>.js'></script>
+    <script type="text/javascript" src="/scripts/utils/security.js"></script>
+    <script src="/lib/angular/angular.js"></script>
+    <script src="/lib/angular-messages/angular-messages.js"></script>
+    <script type="text/javascript" src="/lib/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <script src="/scripts/utils/jquery.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.messages_cn.js"></script>
+    <script src="/lib/angular-ui-select/dist/select.js"></script>
+    <script src="/lib/angular-ui-grid/ui-grid.js"></script>
+    <script src="/scripts/utils/grid-pagination.js"></script>
+    <script type="text/javascript" src="/scripts/utils/date.js"></script>
+    <script src="/lib/underscore/underscore.js"></script>
+    <script src="/scripts/utils/jquery-ui-1.11.4/jquery-ui.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/lib/angular-spinners/angular-spinners.min.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery-validate.bootstrap-tooltip.js"></script>
+    <script src="/lib/gridstack/gridstack.js"></script>
+    <script src="/lib/flexibility/flexibility.js"></script>
+    <script src="/lib/gridstack-angular/gridstack-angular.js"></script>
+    <script src="/lib/echarts/echarts.js"></script>
+    <script src="/lib/ng-dialog/ngDialog.js"></script>
+    <script src="/lib/echarts/macarons.js"></script>
+    <script src="/lib/echarts/dark.js"></script>
+    <script src="/lib/echarts/infographic.js"></script>
+    <script src="/lib/echarts/roma.js"></script>
+    <script src="/lib/echarts/shine.js"></script>
+    <script src="/lib/echarts/vintage.js"></script>
+    <script src="/lib/echarts/dcs.js"></script>
+
+
+    <!--引入autoShow相关-->
+    <!--<script src="/scripts/dashboardConfig/editDashboardConfigCtrl.js"></script>-->
+
+
+    <script src="/scripts/components/conditionInput.js"></script>
+    <script src="/scripts/dashboard/viewDashboardCtrl.js"></script>
+    <script src="/scripts/eeError.js"></script>
+    <script src="/scripts/components/dashboardPanel.js"></script>
+    <script src="/scripts/components/directives.js"></script>
+    <script src="/lib/iframe-resizer/iframeResizer.contentWindow.js"></script>
+
+    <!--引入bsTable的有关依赖-->
+    <script src="/lib/bootstrap-table/bootstrap-table.js"></script>
+    <script src="/lib/bootstrap-table/bootstrap-table-angular.js"></script>
+    <!--<script src="/lib/bootstrap-table/app.js"></script>-->
+    <link rel="stylesheet" href="/lib/bootstrap-table/bootstrap-table.css">
+
+
+
+
+
+</head>
+<style literal-content="dashboardConfig.css"></style>
+<style>
+    .ee-overflow-visible .ui-grid-viewport {
+        overflow: visible !important;
+    }
+    .grid-stack-item-content:hover {
+        border-style: dashed;
+        border-color: #a1a1a1;
+        border-width: thin;
+    }
+    .dashboard-panel {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        border-left: 1px solid #f4f4f4;
+        border-bottom: 1px solid #f4f4f4;
+        border-right: 1px solid #f4f4f4;
+    }
+</style>
+<body style="overflow-x: hidden;padding-bottom: 20px;">
+
+<div style="overflow: visible;margin-left: auto;margin-right: auto;margin-top: 10px;">
+    <div ng-class="{'layout-lock-button': true, 'layout-lock-button-locked': ! movable, 'layout-lock-button-unlocked': movable}" ng-click="switchLock()"></div>
+    <spinner name="mySpinner"  img-src="/img/spinner.gif" style="position:absolute;width:100%;height:100%;z-index: 99;text-align: center;"></spinner>
+    <h1 style="text-align: center;" id="reportNameHide">{{dashboardConfig.reportName}}</h1>
+    <div class="col-md-12 col-lg-12 col-sm-12 dashboard-panel" style="word-wrap: break-word;margin-bottom:20px;border-bottom:#cccccc solid 1px;">
+        <form id=form_{{dashboardConfig._id}} name=form_{{dashboardConfig._id}} autocomplete="on" ng-submit="search()">
+            <div style="padding-left: 15px;padding-right: 15px;margin-top: 10px;">
+                <div class="col-sm-11 col-md-11 col-lg-11" style="margin-bottom: 10px;">
+                    <condition-input details="dashboardConfig.condition"></condition-input>
+                </div>
+                <div class="col-sm-1 col-md-1 col-lg-1" style="top:5px;">
+                    <button type="submit" id="allClick" class="btn search-btn" ng-disabled="disableGlobalBtn" ng-if="dashboardConfig.condition.length!=0">{{RR('searchALLBtn')}}</button>
+                    <button type="submit" id="allClick" class="btn search-btn" ng-disabled="disableGlobalBtn" ng-if="dashboardConfig.condition.length==0">{{RR('refreshAll')}}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr style="border-top:1px solid #ccc">
+    <div class="col-md-12 col-lg-12 col-sm-12 dashboard-container">
+        <div gridstack="gridstack" class="grid-stack grid1" options="options">
+            <div gridstack-item ng-repeat="w in dashboardConfig.panels"
+                 class="grid-stack-item" gs-item-x="w.frame.x" gs-item-y="w.frame.y"
+                 gs-item-width="w.frame.width" gs-item-height="w.frame.height"
+                 gs-item-autopos="0">
+                <div class="grid-stack-item-content" style="display: flex;flex-direction: column;overflow-y: hidden;">
+                    <!--Set height to hide scrollbar-->
+                    <!--x:{{w.frame.x}},y:{{w.frame.y}},w:{{w.frame.width}},h:{{w.frame.height}},{{w._id}}-->
+                    <dashboard-panel
+                            dashboard-config="dashboardConfig"
+                            panel-config="w"
+                            ng-style="{width: '100%', height: '100%', opacity: w.active ? 1:0.2}"
+                            style="flex-grow: 1"
+                            class="dashboard-panel-content"
+                    >
+                    </dashboard-panel>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+
