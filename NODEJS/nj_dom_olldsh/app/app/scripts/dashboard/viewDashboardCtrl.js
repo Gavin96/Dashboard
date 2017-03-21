@@ -29,7 +29,6 @@ angular.module('viewDashboardApp', [
             // 将自动加载图表功能和前端checkbox的值绑定到一起
             $scope.$watch('dashboardConfig.autoShow', function(){
                 // console.log($scope.dashboardConfig.autoShow);
-                // console.log($scope.dashboardConfig.active);
                 if($scope.dashboardConfig.autoShow){
                     $(window).load(function(){
                         document.getElementById("allClick").click();
@@ -39,6 +38,13 @@ angular.module('viewDashboardApp', [
                 }
             })
             // ends
+                
+            // console.log(dashboardConfig.nameHide);
+            $scope.$watch('dashboardConfig.nameHide', function{
+                if($scope.dashboardConfig.nameHide){
+                   document.getElementById("reportNameHide").style.display="none";
+                }
+            })
 
             $scope.RR = RR;
 
