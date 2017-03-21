@@ -110,6 +110,7 @@ var reportConfigSchema = mongoose.Schema({
     ],
     // adds.
     autoShow: Boolean,
+    nameHide: Boolean,
     active: Boolean
 });
 
