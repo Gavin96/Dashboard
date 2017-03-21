@@ -1,4 +1,4 @@
 # Dashboard
 Transfer from company changes
 
-Mongodb Nosql  'Not only sql'
+Nosql 'Not only sql'   almost can't execute sql like Mongodb
