@@ -8,7 +8,6 @@ angular.module('viewDashboardApp', [
         'ui.grid', 'ui.grid.edit', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.resizeColumns', 'ui.grid.moveColumns',
         'gridstack-angular', 'components', 'ui.date',
         'ngDialog','ui.grid.pagination','angularSpinners','bsTable'])
-    // 你在这行引入了bsTable的模块，和你临走前写给我的小纸条上不一样，小纸条说引入bsTable是在dashboardviewctrl.js实现的，但是在那里我并不能找到，却在这里找到了
     .controller('viewDashboardCtrl', ['$scope', '$http', 'toastr', 'ngDialog', 'conditionInputValidator',
         function ($scope, $http, toastr, ngDialog, conditionInputValidator) {
 
