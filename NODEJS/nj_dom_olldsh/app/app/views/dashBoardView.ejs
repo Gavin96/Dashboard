@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html ng-app="dashBoardViewApp" ng-controller="dashBoardViewCtrl" >
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="stylesheet" href="/lib/bootstrap.css">
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/lib/gridstack/gridstack.css">
+    <link rel="stylesheet" href="/scripts/utils/jquery-ui-1.11.4/jquery-ui.css">
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/chosen.jquery.js"></script>
+    <script src="/lib/angular/angular.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/lib/angular-route/angular-route.min.js"></script>
+    <script src="/lib/underscore/underscore-min.js"></script>
+    <script src="/lib/angular-messages/angular-messages.js"></script>
+    <script src="/lib/angular-ui-grid/ui-grid.js"></script>
+    <script src="/lib/angular-spinners/angular-spinners.min.js"></script>
+
+    <link rel="stylesheet" href="/lib/angular-ui-grid/ui-grid.css">
+    <script src="/scripts/utils/grid-pagination.js"></script>
+    <script src="/scripts/utils/jquery.bootstrap.min.js"></script>
+    <script src="/scripts/utils/jquery-ui-1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.js"></script>
+    <script type="text/javascript" src="/scripts/utils/date.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.messages_cn.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery-validate.bootstrap-tooltip.js"></script>
+    <script type="text/javascript" src="/lib/gridstack/gridstack.js"></script>
+    <link rel="stylesheet" type="text/css" href="/lib/angular-toastr/dist/angular-toastr.css"/>
+    <script type="text/javascript" src="/lib/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <script src="/lib/gridstack-angular/gridstack-angular.js"></script>
+    <script src="/lib/echarts/echarts.min.js"></script>
+    <script src = "/scripts/dashBoardViewCtrl.js"></script>
+    <script src="/lib/flexibility/flexibility.js"></script>
+    <script src="/lib/echarts/macarons.js"></script>
+    <script src="/lib/echarts/dark.js"></script>
+    <script src="/lib/echarts/infographic.js"></script>
+    <script src="/lib/echarts/roma.js"></script>
+    <script src="/lib/echarts/shine.js"></script>
+    <script src="/lib/echarts/vintage.js"></script>
+
+    <script src="/lib/echarts/dcs.js"></script>
+
+    <script src="/scripts/components/conditionGrid.js"></script>
+    <script src="/scripts/components/directives.js"></script>
+    <script src="/lib/angular-ui-select/dist/select.js"></script>
+    <script src="/lib/iframe-resizer/iframeResizer.contentWindow.js"></script>
+    <link rel="stylesheet" href="/lib/angular-ui-select/dist/select.css">
+    <script src="/scripts/eeError.js"></script>
+    <style>
+        .grid-stack-item-content {
+            border-style: dotted;
+            border-color: #949494;
+            border-width: thin;
+        }
+        .from_date::before{ content:"" }
+        .to_date::before{ content:"" }
+        .ee-overflow-visible .ui-grid-viewport {
+            overflow: visible !important;
+        }
+
+    </style>
+    <style literal-content="ReportInfo.css">
+    </style>
+    <style>
+        body {
+            height: auto; !important;
+        }
+
+        img{
+            position: absolute;
+            top:35%;
+            left:45%;
+        }
+    </style>
+</head>
+<body style="overflow-x:hidden;">
+    <% if(!!preview) { %>
+    <div style="margin-top:10px;margin-left:auto;margin-right:auto;overflow: visible">
+    <% } %>
+    <div style="word-wrap: break-word">
+        <h1 style="text-align: center;"><%=ReportInfo.reportName%></h1>
+        <form  ng-submit="conditionForm.$valid && searchCharts()" id="conditionForm" name="conditionForm" style="margin-bottom: 20px;margin-top: 10px">
+            <fieldset>
+                <!--搜索条件-->
+                <div>
+                    <%var count = 0%>
+                    <%var conditionList= []%>
+                    <%for(var i = 0;i<ReportInfo.condition.length;i++){%>
+                    <%conditionList.push(ReportInfo.condition[i]);%>
+                    <%}%>
+                    <%var conditionStr = ""%>
+                    <%for(var i=0;i<conditionList.length;i++){%>
+                        <%conditionStr = conditionStr + conditionList[i].name+"||"+conditionList[i].type+"||"+conditionList[i].key+","%>
+                    <%}%>
+                    <input type="hidden" id="condition_name" value='<%-conditionStr%>'/>
+                    <%for(var i = 0;i<conditionList.length;i++){%>
+                        <%if(conditionList[i].type=="Textbox"){%>
+                            <%if(count%3==0){%>
+                                <div class="form-group" >
+                            <%}%>
+                            <%count++%>
+                            <%if(conditionList[i].need){%>
+                                <label for="<%-conditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding" required><%-conditionList[i].name%></label>
+                            <%}else{%>
+                                <label for="<%-conditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding"><%-conditionList[i].name%></label>
+                            <%}%>
+                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                        <input type="text" name="<%-conditionList[i].key%>" class="form-control" ng-model="<%-conditionList[i].key.replace(".","_")+"_condition"%>" <% if(conditionList[i].need){%>ee-error="$error.<%-conditionList[i].key%>"<%}%>>
+                                    </div>
+
+                            <%if(count==conditionList.length){%>
+                                <div class="pull-right">
+                                    <button type="submit" class="btn search-btn" id="globalSearchBtn" ng-disabled = "globalBtnDisable">搜索</button>
+                                </div>
+                            <%}%>
+                            <%if(count%3==0){%>
+                                </div>
+                            <%}%>
+                        <%}%>
+                        <%if(conditionList[i].type=="Combox"){%>
+                            <%if(count%3==0){%>
+                                <div class="form-group" >
+                            <%}%>
+                            <%count++%>
+                            <%if(conditionList[i].need){%>
+                                <label for="<%-conditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding" required><%-conditionList[i].name%></label>
+                            <%}else{%>
+                                <label for="<%-conditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding"><%-conditionList[i].name%></label>
+                            <%}%>
+                            <%var items = conditionList[i].value.split(",");%>
+                            <%if(conditionList[i].multi){%>
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <select  ng-model="<%-conditionList[i].key.replace(".","_")+"_condition"%>" data-placeholder=" " name="<%-conditionList[i].key+"_condition"%>" class="chosen-select form-control selectR" multiple
+                                            <% if(conditionList[i].need){%> ee-error="$error.<%-conditionList[i].key+"_condition"%>"<%}%>
+                                    >
+                                    <%var conditionflag = 1;%>
+                                    <%for(var j = 0;j<items.length;j++){%>
+                                        <%if(items[j].split("{").length>1){%>
+                                            <%if(items[j].split("{")[0]!=""){%>
+                                            <option value="<%-items[j].split("{")[1]%>"><%-items[j].split("{")[0]%></option>
+                                            <%}else{%>
+                                            <%conditionflag=2;%>
+                                            <input type="hidden" id="<%-conditionList[i].key.replace(".","_")+"_condition_default"%>" value='<%-items[j].split("{")[1]%>'/>
+                                            <%}%>
+                                        <%}else{%>
+                                        <option value="<%-items[j]%>"><%-items[j]%></option>
+                                        <%}%>
+                                    <%}%>
+                                    <%if(conditionflag==1){%>
+                                    <input type="hidden" id="<%-conditionList[i].key.replace(".","_")+"_condition_default"%>" value=''/>
+                                    <%}%>
+                                    </select>
+                                </div>
+                            <%}else{%>
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <select ng-model="<%-conditionList[i].key.replace(".","_")+"_condition"%>" name="<%-conditionList[i].key+"_condition"%>" class="form-control"
+                                            <% if(conditionList[i].need){%> ee-error="$error.<%-conditionList[i].key%>"<%}%>
+                                    >
+                                        <%var conditionflag = 1;%>
+                                        <%var conditiondefaultvalue = "";%>
+                                        <%var conditionArray = [];%>
+                                        <%for(var j = 0;j<items.length;j++){%>
+                                            <%if(items[j].split("{").length>1){%>
+                                                <%if(items[j].split("{")[0]!=""){%>
+                                                <%conditionArray.push(items[j]);%>
+                                                <%}else{%>
+                                                    <%conditionflag=2;%>
+                                                    <%conditiondefaultvalue = items[j].split("{")[1]%>
+                                                <%}%>
+                                            <%}else{%>
+                                            <%conditionArray.push(items[j]);%>
+                                            <%}%>
+                                        <%}%>
+                                            <option value=''>全部</option>
+                                        <%for(var j=0;j<conditionArray.length;j++){%>
+                                            <%if(conditionArray[j].split("{").length>1){%>
+                                            <option value="<%-conditionArray[j].split("{")[1]%>"><%-conditionArray[j].split("{")[0]%></option>
+                                            <%}else{%>
+                                            <option value="<%-conditionArray[j]%>"><%-conditionArray[j]%></option>
+                                            <%}%>
+                                        <%}%>
+                                    </select>
+                                    <input type="hidden" id="<%-conditionList[i].key.replace(".","_")+"_condition_default"%>" value="<%-conditiondefaultvalue%>"/>
+                                </div>                                
+                            <%}%>
+                            <%if(count==conditionList.length){%>
+                                <div class="pull-right">
+                                    <button type="submit" class="btn search-btn" id="globalSearchBtn" ng-disabled = "globalBtnDisable">搜索</button>
+                                </div>
+                            <%}%>
+                            <%if(count%3==0){%>
+                                </div>
+                            <%}%>
+                        <%}%>
+                        <%if(conditionList[i].type=="Date"){%>
+                            <%if(count%3==0){%>
+                            <div class="form-group" >
+                            <%}%>
+                            <%count++%>
+                            <%if(conditionList[i].need){%>
+                                <label for="<%-conditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding" required><%-conditionList[i].name%></label>
+                            <%}else{%>
+                                <label for="<%-conditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding"><%-conditionList[i].name%></label>
+                            <%}%>
+                            <%var tmpconditionkey = conditionList[i].key;%>
+                            <%tmpconditionkey = tmpconditionkey.replace(".","_");%>
+                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                <input ui-date name="<%-conditionList[i].key%>" class="form-control uppercase from_date" ng-model="<%-tmpconditionkey+'_From'+"_condition"%>" <% if(conditionList[i].need){%> ee-error="$error.<%-conditionList[i].key%>"<%}%>>
+                            </div>
+                            <div style="float: left;position: relative">~</div>
+                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                <input ui-date name="<%-conditionList[i].key%>" class="form-control uppercase to_date" ng-model="<%-tmpconditionkey+'_To'+"_condition"%>" <% if(conditionList[i].need){%> ee-error="$error.<%-conditionList[i].key%>"<%}%>>
+                            </div>
+                            <%if(count==conditionList.length){%>
+                                <div class="pull-right">
+                                    <button type="submit" class="btn search-btn" id="globalSearchBtn" ng-disabled = "globalBtnDisable">搜索</button>
+                                </div>
+                            <%}%>
+                            <%if(count%3==0){%>
+                                </div>
+                            <%}%>
+                        <%}%>
+                    <%}%>
+                </div>
+            </fieldset>
+            <%if(conditionList.length > 0){%>
+            <hr style="border-top:1px solid #ccc"/>
+            <%}%>
+        </form>
+        <div id="searchreportshowarea" class="dashboard-container">
+            <div class="grid-stack" data-gs-width="12" data-gs-animate="yes">
+                    <%for(var seq=0;seq<ReportInfo.panels.length;seq++){%>
+                        <div class="grid-stack-item" data-gs-x="<%-ReportInfo.panels[seq].frame.x%>" data-gs-y="<%-ReportInfo.panels[seq].frame.y%>" data-gs-width="<%-ReportInfo.panels[seq].frame.width%>" data-gs-height="<%-ReportInfo.panels[seq].frame.height%>">
+                            <spinner name="<%-'mySpinner'+seq%>" group="reportFoo" img-src="/img/spinner.gif" style="position:absolute;width:100%;height:100%;z-index: 99;text-align: center;"></spinner>
+                            <div class="grid-stack-item-content dashboard-panel-content">
+                                <div style="display: flex;flex-direction: column;height: 100%;overflow: hidden;">
+                            <%if(ReportInfo.panels[seq].chartType=='表格 Table'||'红绿灯表格 Table2'){%>
+                                <h1 style="text-align: center;"><%=ReportInfo.panels[seq].title%></h1>
+                            <%}%>
+                            <form class="form-horizontal" ng-submit="conditionForm<%-seq %>.$valid && searchChart(<%-seq %>)" id="conditionForm<%-seq %>" name="conditionForm<%-seq %>" style="flex-basis: auto;margin-bottom: 20px;margin-top: 10px">
+                            <fieldset>
+                                <!--chart搜索条件-->
+                                <div>
+                                    <%var count = 0%>
+                                    <%var panelConditionList= []%>
+                                    <%for(var i = 0;i<ReportInfo.panels[seq].condition.length;i++){%>
+                                    <%panelConditionList.push(ReportInfo.panels[seq].condition[i]);%>
+                                    <%}%>
+                                    <%var panelConditionStr = []%>
+                                    <%panelConditionStr[seq]=''%>
+                                    <%for(var j=0;j<panelConditionList.length;j++){%>
+                                    <%panelConditionStr[seq] = panelConditionStr[seq]+panelConditionList[j].name+"||"+panelConditionList[j].type+"||"+panelConditionList[j].key +","%>
+                                    <%}%>
+                                    <%panelConditionStr[seq] =panelConditionStr[seq].substring(0,panelConditionStr[seq].length-1)%>
+                                    <input type="hidden" id="condition_name<%-seq %>" value='<%-panelConditionStr[seq]%>' name="chartCondition"/>
+                                    <%for(var i = 0;i<panelConditionList.length;i++){%>
+                                    <%if(panelConditionList[i].type=="Textbox"){%>
+                                        <%if(count%3==0){%>
+                                        <div  class="form-group" >
+                                        <%}%>
+                                        <%count++%>
+                                        <%if(panelConditionList[i].need){%>
+                                        <label for="<%-panelConditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding" required><%-panelConditionList[i].name%></label>
+                                        <%}else{%>
+                                        <label for="<%-panelConditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding"><%-panelConditionList[i].name%></label>
+                                        <%}%>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <input type="text" name="<%-panelConditionList[i].key%>" class="form-control" ng-model="<%-panelConditionList[i].key.replace(".","_")+"_condition"+seq%>" ng-required="<%-panelConditionList[i].need%>">
+                                        </div>
+                                        <%if(count==panelConditionList.length){%>
+                                            <button type="submit" class="btn search-btn" id="globalSearchBtn" ng-disabled = "globalBtnDisable">搜索</button>
+                                        <%}%>
+                                        <%if(count%3==0){%>
+                                            </div>
+                                        <%}%>
+                                    <%}%>
+                                    <%if(panelConditionList[i].type=="Combox"){%>
+                                        <%if(count%3==0){%>
+                                        <div  class="form-group" >
+                                        <%}%>
+                                        <%count++%>
+                                        <%if(panelConditionList[i].need){%>
+                                        <label for="<%-panelConditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding" required><%-panelConditionList[i].name%></label>
+                                        <%}else{%>
+                                        <label for="<%-panelConditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding"><%-panelConditionList[i].name%></label>
+                                        <%}%>
+                                        <%var items = panelConditionList[i].value.split(",");%>
+                                        <%if(panelConditionList[i].multi){%>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <select name="select" ng-required="panelConditionList[i].need" ng-model="<%-panelConditionList[i].key.replace(".","_")+"_condition"+seq%>" data-placeholder=" " name="<%-panelConditionList[i].key+"_condition"%>" class="chosen-select form-control selectR" multiple>
+                                                    <%var conditionflag = 1;%>
+                                                    <%for(var j = 0;j<items.length;j++){%>
+                                                    <%if(items[j].split("{").length>1){%>
+                                                    <%if(items[j].split("{")[0]!=""){%>
+                                                    <option value="<%-items[j].split("{")[1]%>"><%-items[j].split("{")[0]%></option>
+                                                    <%}else{%>
+                                                    <%conditionflag=2;%>
+                                                    <input type="hidden" id="<%-panelConditionList[i].key.replace(".","_")+"_condition_default"+seq%>" value='<%-items[j].split("{")[1]%>'/>
+                                                    <%}%>
+                                                    <%}else{%>
+                                                    <option value="<%-items[j]%>"><%-items[j]%></option>
+                                                    <%}%>
+                                                    <%}%>
+                                                    <%if(conditionflag==1){%>
+                                                    <input type="hidden" id="<%-panelConditionList[i].key.replace(".","_")+"_condition_default"+seq%>" value=''/>
+                                                    <%}%>
+                                                </select>
+                                        </div>
+                                        <%}else{%>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <select name="select" ng-model="<%-panelConditionList[i].key.replace(".","_")+"_condition"+seq%>" class="form-control selectR" ng-required="<%-panelConditionList[i].need%>">
+                                                    <%var conditionflag = 1;%>
+                                                    <%var conditiondefaultvalue = "";%>
+                                                    <%var conditionArray = [];%>
+                                                    <%for(var j = 0;j<items.length;j++){%>
+                                                    <%if(items[j].split("{").length>1){%>
+                                                    <%if(items[j].split("{")[0]!=""){%>
+                                                    <%conditionArray.push(items[j]);%>
+                                                    <%}else{%>
+                                                    <%conditionflag=2;%>
+                                                    <%conditiondefaultvalue = items[j].split("{")[1]%>
+                                                    <%}%>
+                                                    <%}else{%>
+                                                    <%conditionArray.push(items[j]);%>
+                                                    <%}%>
+                                                    <%}%>
+                                                    <option value=''>全部</option>
+                                                    <%for(var j=0;j<conditionArray.length;j++){%>
+                                                    <%if(conditionArray[j].split("{").length>1){%>
+                                                    <option value="<%-conditionArray[j].split("{")[1]%>"><%-conditionArray[j].split("{")[0]%></option>
+                                                    <%}else{%>
+                                                    <option value="<%-conditionArray[j]%>"><%-conditionArray[j]%></option>
+                                                    <%}%>
+                                                    <%}%>
+                                                </select>
+                                                <input type="hidden" id="<%-panelConditionList[i].key.replace(".","_")+"_condition_default"+seq%>" value="<%-conditiondefaultvalue%>"/>
+                                        </div>
+                                        <%}%>
+                                        <%if(count==panelConditionList.length){%>
+                                            <button type="submit" class="btn search-btn" id="globalSearchBtn" ng-disabled = "globalBtnDisable">搜索</button>
+                                        <%}%>
+                                        <%if(count%3==0){%>
+                                            </div>
+                                        <%}%>
+                                    <%}%>
+                                    <%if(panelConditionList[i].type=="Date"){%>
+                                        <%if(count%3==0){%>
+                                            <div class="form-group" >
+                                        <%}%>
+                                        <%count++%>
+                                        <%if(panelConditionList[i].need){%>
+                                        <label for="<%-panelConditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding" required><%-panelConditionList[i].name%></label>
+                                        <%}else{%>
+                                        <label for="<%-panelConditionList[i].name%>" class="col-sm-1 col-md-1 col-lg-1 ng-binding"><%-panelConditionList[i].name%></label>
+                                        <%}%>
+                                        <%var tmpconditionkey = panelConditionList[i].key;%>
+                                        <%tmpconditionkey = tmpconditionkey.replace(".","_");%>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <input ui-date name="<%-panelConditionList[i].key%>" class="form-control uppercase from_date" ng-model="<%-tmpconditionkey+'_From'+"_condition"+seq%>" ng-required="<%-panelConditionList[i].need%>">
+                                        </div>
+                                        <div style="float: left;position: relative">~</div>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <input ui-date name="<%-panelConditionList[i].key%>" class="form-control uppercase to_date" ng-model="<%-tmpconditionkey+'_To'+"_condition"+seq%>" ng-required="<%-panelConditionList[i].need%>">
+                                        </div>
+                                        <%if(count==panelConditionList.length){%>
+                                            <button type="submit" class="btn search-btn" id="globalSearchBtn" ng-disabled = "globalBtnDisable">搜索</button>
+                                        <%}%>
+                                        <%if(count%3==0){%>
+                                            </div>
+                                        <%}%>
+                                    <%}%>
+                                    <%}%>
+                                </div>
+                                </fieldset>
+                            </form>
+                                <div id="chart<%-seq%>" style="flex-grow: 1;" class="ee-table-container">
+                                    <%if(ReportInfo.panels[seq].chartType =="表格 Table" || "红绿灯表格 Table2"){%>
+                                    <div ui-grid="grid<%-seq%>" ui-grid-resize-columns ui-grid-move-columns ui-grid-pagination style="height:100%;width:100%;flex-grow:1;">
+                                    </div>
+                                    <%}%>
+                                 </div>
+                                </div>
+                            </div>
+                        </div>
+                    <%}%>
+            </div>
+        </div>
+    </div>
+    <% if(!!preview) { %>
+    </div>
+    <% } %>
+</body>
+<script>
+    var reportInfo = <%-JSON.stringify(ReportInfo)%>;
+    var filter = <%- JSON.stringify(filter) %>;
+    $(".grid-stack").gridstack({
+        cellHeight: 25,
+        cellWidth: 25,
+        vertical_margin: 10,
+        animate: false,
+        resizable: {
+            handles: 'n, e, se, s, sw, w'
+        }
+    });
+</script>
+</html>
