@@ -1,0 +1,31 @@
+<div style="width:100%; height:100%; display: flex;flex-direction: column">
+    <div>
+        <!--{{JSON.stringify(dashboardConfig)}}-->
+        <div ng-show="panelConfig.chartType=='表格 Table' && !panelConfig.hideTitle">
+            <h1 style="position: relative;text-align: center">{{panelConfig.title}}</h1>
+        </div>
+        <div ng-hide="panelConfig.condition.length===0">
+            <div class="col-sm-11 col-md-11 col-lg-11" style="margin-bottom: 10px;">
+                <form class="form-horizontal" style="flex-basis: auto;margin-bottom: 20px;margin-top: 10px">
+                    <condition-input details="panelConfig.condition"></condition-input>
+                </form>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1"style="top:15px;">
+                <button class="btn search-btn"  ng-click="search()" ng-disabled="disableBtn">{{RR('searchBtn')}}</button></div>
+        </div>
+    </div>
+    <spinner img-src="/img/spinner.gif" style="position:absolute;left:45%;top:35%;z-index: 1000;"></spinner>
+    <!--Set height to hide scrollbar-->
+    <div style="display: flex;flex-direction: column;flex-grow:1; overflow-x:hidden;overflow-y:auto; " class="content-panel">
+        <div  ui-grid="gridResult" ng-if="panelConfig.chartType =='表格 Table'" ui-grid-resize-columns ui-grid-move-columns ui-grid-pagination style="position:relative; height:100%;width:100%;">
+        </div>
+         <!--bs table-->
+        <div style="position:relative; height:500px; width:100%;" ng-if="panelConfig.chartType =='红绿灯表格 Table2'">
+            <div class="workspaceContainer" ng-repeat="wk in workspaces" ng-show="currentWorkspace == wk">
+                <table bs-table-control="wk.bsTableControl"></table>
+            </div>
+        </div>
+        <div   class="chartCanvas" ng-if="panelConfig.chartType.substr(panelConfig.chartType.length - 5) == 'Chart'" style="flex-grow:1;">
+        </div>
+    </div>
+</div>
