@@ -1,0 +1,292 @@
+<!--class sequence: boot ctrl class > col-md-x > margin-x > other class -->
+<style>
+    #sqlEditorWrap{position: relative}
+    #sqlEditor{position: absolute; top:0;left:0;right:0;bottom:0;}
+</style>
+<div class="col-md-12 panelDialog">
+    <div id="chartcfgdiv">
+        <!--概要信息DIV-->
+        <fieldset>
+            <h2 class="group-head"><b>概要信息</b></h2>
+            <div class="input-group  col-md-12">
+                <label for="chartname" class="col-md-2" required>图表名称</label>
+                <div class="col-md-4">
+                    <input type="text" id="chartname" class="form-control" ng-model="panelConfig.title" required>
+                </div>
+                <label for="isActive" class="col-md-1">激活</label>
+                <div class="col-md-1">
+                    <input style="margin-top: 8px" id="isActive" type="checkbox" ng-model="panelConfig.active">
+                </div>
+                <label for="hideTitle" class="col-md-2">隐藏名称</label>
+                <div class="col-md-1">
+                    <input style="margin-top: 8px" id="hideTitle" type="checkbox" ng-model="panelConfig.hideTitle">
+                </div>
+            </div>
+            <div class="input-group  col-md-12">
+                <label for="remarkarea" class="col-md-2 margin-15">备注</label>
+                <div class="col-md-8 margin-10">
+                    <textarea class="form-control margin-10" id="remarkarea" cols="20" rows="1"
+                              ng-model="panelConfig.remark"></textarea>
+                </div>
+            </div>
+
+            <h2 class="group-head"><b>数据源</b></h2>
+            <div class="input-group col-md-12">
+                <label for="connectionSel" class="col-md-2" required>连接名称</label>
+                <div class="col-md-4">
+                    <!--null not allowed-->
+                    <select id="connectionSel" class="fluid-width" ng-model="panelConfig.connection"
+                            ng-options="item._id as item.connectionName for item in connection"
+                            ng-change="connectionChange()"></select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="btn-toolbar grid-toolbar margin-20 gray-bk" role="toolbar">
+                    <div class="pull-right">
+                        <button class="menu-btn fa fa-save gray-bk" ng-click="autoPrint()">自动填充</button>
+                    </div>
+                </div>
+                <div class="input-group  col-md-12">
+                    <div resizable id="sqlEditorWrap">
+                        <div class="fluid-width" id="sqlEditor" name="sqlCode" ui-ace="{mode:'sql'}"
+                             ng-model="panelConfig.datasource"></div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+
+        <fieldset>
+            <h2 class="group-head"><b>Dashboard条件</b></h2>
+            <div class="col-md-12" >
+                <condition-grid details="dashboardConfig.condition" disabled="true"></condition-grid>
+            </div>
+        </fieldset>
+
+        <!--图表条件DIV-->
+        <fieldset>
+            <h2 class="group-head"><b>图表条件</b></h2>
+            <!--<div class="col-md-12">-->
+                <!--<div class="btn-toolbar grid-toolbar gray-bk" role="toolbar">-->
+                    <!--<div class="pull-right">-->
+                        <!--<button type="submit" class="menu-btn fa fa-arrow-circle-down gray-bk" ng-click="down('condition')">下移</button>-->
+                    <!--</div>-->
+                    <!--<div class="pull-right">-->
+                        <!--<button type="submit" class="menu-btn fa fa-arrow-circle-up gray-bk"  ng-click="up('condition')">上移</button>-->
+                    <!--</div>-->
+                    <!--<div class="pull-right">-->
+                        <!--<button type="button" class="menu-btn fa fa-minus-circle gray-bk" ng-click="delete('condition')">删除</button>-->
+                    <!--</div>-->
+                    <!--<div class="pull-right">-->
+                        <!--<button type="button" class="menu-btn fa fa-plus-circle gray-bk" ng-click="addCondition()">增加</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div ui-grid="uigridConfig.condition" ui-grid-selection ui-grid-edit ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns class="ee-grid-auto-height"/>-->
+            <!--</div>-->
+            <div class="col-md-12">
+                <condition-grid details="panelConfig.condition"></condition-grid>
+            </div>
+
+        </fieldset>
+
+        <!--图表明细DIV-->
+        <fieldset>
+            <h2 class="group-head"><b>图表明细</b></h2>
+            <div class="col-md-12">
+                <detail-grid details="uigridConfig.detail.data"></detail-grid>
+            </div>
+        </fieldset>
+
+        <!--表设置DIV-->
+        <fieldset>
+            <h2 class="group-head"><b>图表设置</b></h2>
+            <div class="input-group col-md-12">
+                <div class="col-md-5">
+                    <label for="charttypeselect" class="col-md-1" style="width:100px;" required>图表类型</label>
+                    <div class="col-md-8" style="width:64%;">
+                        <select id="charttypeselect" class="form-control" ng-model="panelConfig.chartType" ng-options="type for type in chartType" ng-change="chartTypeChange()" ></select>
+                    </div>
+                    <abbr style="border-bottom:0;" title="查看配置文档"><button type="button" style="background: transparent;border: 0;margin-top: 5px;" ng-click="viewDoc()">
+                        <span class="glyphicon glyphicon-question-sign" ></span></button></abbr>
+                </div>
+
+                <div class="col-md-7">
+                    <label class="form-group checkbox-inline col-md-1" style="width:100px;">
+                        <input type="checkbox"  ng-model="panelConfig.autoRefresh"> 刷新时间
+                    </label>
+                    <input type="text" class="col-md-2" ng-model="panelConfig.refreshInterval" ng-disabled="!panelConfig.autoRefresh">
+                    <label style="margin-left:4px">秒</label>
+                </div>
+            </div>
+
+            <div class="input-group col-md-12 margin-20" ng-if="isWebpageType">
+                <label for="pageurl" class="col-md-1" style="margin-left: 14px;width: 100px;">网页</label>
+                <div class="col-md-9">
+                    <input type="text" id="pageurl" class="form-control" ng-model="panelConfig.webpageUrl">
+                </div>
+            </div>
+
+            <div class="col-md-12 margin-20" ng-if="!isWebpageType">
+                <div>
+                    <div class="form-group col-md-5">
+                        <div id="chartarea" style="width: 85%;height:500px;border: 1px solid #000;" my-chart-type type="panelConfig.chartType" theme="panelConfig.theme"></div>
+                        <div class="input-group margin-10 col-md-12" ng-if="showTheme">
+                            <label for="themeselect" style="width: 100px;color:#0085cf;left: 0px;">切换主题</label>
+                            <select style="width:40%;" id="themeselect" ng-model="panelConfig.theme" ng-options="theme for theme in chartTheme"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-7">
+                    <!--<div class="form-group col-md-7" ng-if="!isTableType">  //Table type can also show the JS plate-->
+                        <div class="btn-group fluid-width">
+                            <button type="button" ng-class="mybtngroup2" style="width:50%" ng-click="showCfg()" ng-disabled='isTabType'>设置</button>
+                            <button type="button"  ng-class="mybtngroup1" style="width:50%" ng-click="showJS()">JS代码</button>
+                        </div>
+
+                        <div ng-if="showJs" class="jsEditorPanel">
+                            <textarea class="fluid-width" id="editarea" name="jscode" ui-ace="{mode:'javascript'}"  ng-model="panelConfig.jsCustomizationCode"></textarea>
+                        </div>
+
+
+                        <div ng-if="!showJs && isTableType2">
+                            <div class="col-md-12" style="margin-top:10px">
+                              <div style="font-size:19px;font-family: 微软雅黑;"><b>Demo :</b></div>
+                              <div style="font-size:8px;"><I>(Supposing there are two columns for this table, and they are "asnnum" and "month")</I></div>
+                                <pre>
+options = [
+{
+    name:"asnnum",
+    show:"icon",
+    func:function(asnnum){
+       if(asnnum<100)
+         {return {org:asnnum, content:"blueFlag.png"}}
+       else if(asnnum < 300 )
+         {return {org:asnnum, content:"greenFlag.png"}}
+       else
+         {return {org:asnnum, content:"yellowFlag.png"}}
+    }
+},
+{
+    name:"month",
+    show:"text",
+    func:function(month){
+       if(month > 2 && month < 9)
+         {return {org:month,content:"春夏"}}
+       else
+         {return {org:month,content:"秋冬"}}
+    }
+}
+];
+</pre>                            
+                        </div>
+
+
+                        <!--<div ng-if="!showJs">-->
+                        <!--这里是为Table类型的图表加显示JS代码框-->
+                        <div ng-if="!showJs && !isTableType1 && ！isTableType2">
+                            <fieldset ng-if="showAxis">
+                                <h3 class="group-head"><b>轴</b></h3>
+                                <div ui-grid="uigridConfig.axisConfig"  style="height:150px;" ui-grid-edit  ui-grid-move-columns class="ee-grid-auto-height"/>
+                            </fieldset>
+                            <fieldset>
+                                <h3 class="group-head"><b>图例</b></h3>
+                                <div class="row">
+                                    <div class="input-group col-md-12" style="margin-top:-10px;">
+                                        <div class="col-md-2" style="padding: 0;margin-left:15px;">类型</div>
+                                        <div class="col-md-9">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="legendTypeOptions"  value="none" ng-model="panelConfig.moreConfig.legend.legendType" ng-change="legendTypeChange()" ng-disabled="disableLegendTypeNoneOpt"> 无
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="legendTypeOptions"  value="col" ng-model="panelConfig.moreConfig.legend.legendType" ng-change="legendTypeChange()" ng-disabled="disableLegendTypeColOpt"> 列
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="legendTypeOptions"  value="row" ng-model="panelConfig.moreConfig.legend.legendType" ng-change="legendTypeChange()" ng-disabled="disableLegendTypeRowOpt"> 行（列名）
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-if="!disableLegendName">
+                                    <div class="input-group  col-md-12">
+                                        <div class="col-md-2" style="padding: 0;margin-left:15px;">字段</div>
+                                        <div class="col-md-9" ng-if="legendValueMulti">
+                                            <ui-select ng-model="panelConfig.moreConfig.legend.value"  theme="bootstrap" append-to-body="false"  multiple="multiple" style="width: 100%" ng-disabled="disableLegendName">
+                                                <ui-select-match placeholder="选择图例字段(可多选)">{{$item.value}}</ui-select-match>
+                                                <ui-select-choices repeat="con.key as con in panelConfig.detail">
+                                                    <div>{{con.value}}</div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+
+                                        <div class="col-md-9" ng-if="!legendValueMulti">
+                                            <select ng-model="panelConfig.moreConfig.legend.value" ng-options="de.key as de.value for de in panelConfig.detail" style="width:100%" ng-disabled="disableLegendName">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <h3 class="group-head"><b>系列</b></h3>
+                                <div class="row" ng-if="!disableSeriesName">
+                                    <div class="input-group col-md-12" style="margin-top:-10px;">
+                                        <div class="col-md-2" style="padding: 0;margin-left:15px;">名称</div>
+                                        <div class="col-md-9" >
+                                            <select ng-model="panelConfig.moreConfig.series.name" ng-options="de.key as de.value for de in panelConfig.detail" style="width:100%" ng-disabled="disableSeriesName">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-if="!disableSeriesData">
+                                    <div class="input-group  col-md-12">
+                                        <div class="col-md-2" style="padding: 0;margin-left:15px;">数据</div>
+                                        <div class="col-md-9" ng-if="seriesValueMulti">
+                                            <ui-select ng-model="panelConfig.moreConfig.series.value"  theme="bootstrap" append-to-body="false"  multiple="multiple" style="width: 100%" ng-disabled="disableSeriesData">
+                                                <ui-select-match placeholder="选择系列数据(多选)">{{$item.value}}</ui-select-match>
+                                                <ui-select-choices repeat="con.key as con in panelConfig.detail">
+                                                    <div>{{con.value}}</div>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+
+                                        <div class="col-md-9" ng-if="!seriesValueMulti">
+                                            <select ng-model="panelConfig.moreConfig.series.value" ng-options="de.key as de.value for de in panelConfig.detail" style="width:100%" ng-disabled="disableSeriesData">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </fieldset>
+
+                            <button class="btn btn-primary margin-20" ng-click="generateCode()">生成代码</button>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </fieldset>
+
+        <div style="height: 20px"></div>
+
+        <form class="form-horizontal" role="form" name="reportConfigForm" id="reportConfigForm">
+            <div class="row">
+                <div class="col-md-offset-8">
+                    <button ng-click="saveConfig()" class="btn btn-default" >保存</button>
+                    <button ng-click="cancelConfig()" class="btn btn-warning" style="margin-left:20px">取消</button>
+                </div>
+            </div>
+        </form>
+
+        <div style="height: 40px"></div>
+    </div>
+
+
+</div>
+
