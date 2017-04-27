@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+    <title>E-Dashboard丨查询Dashboard</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+
+    <script src="/resource/text.zh_CN.js"></script>
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/angular/angular.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/lib/angular-route/angular-route.min.js"></script>
+    <script src="/lib/underscore/underscore-min.js"></script>
+    <script src="/lib/angular-messages/angular-messages.js"></script>
+    <script type="text/javascript" src="/lib/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <link rel="stylesheet" type="text/css" href="/lib/angular-toastr/dist/angular-toastr.css"/>
+    <script src="/lib/angular-ui-grid/ui-grid.js"></script>
+    <script src="/scripts/utils/grid-pagination.js"></script>
+    <link rel="stylesheet" href="/lib/angular-ui-grid/ui-grid.css">
+    <script src="/scripts/utils/jquery.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery.validate.messages_cn.js"></script>
+    <script type="text/javascript" src="/scripts/utils/jquery-validate.bootstrap-tooltip.js"></script>
+
+    <script src="/lib/angular-ui-select/dist/select.js"></script>
+    <link rel="stylesheet" href="/lib/angular-ui-select/dist/select.css">
+
+    <script src="/scripts/dashboardConfig/maintainDashboardConfigCtrl.js"></script>
+    <script src="/scripts/common/commonUtils.js"></script>
+</head>
+
+<body ng-app="dashboardConfigApp">
+
+<% include ../menubar %>
+
+<div class="container-fluid">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-controller="maintainDashboardConfigCtrl">
+                <form name="searchForm" class="form-inline">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h2 class="group-head"><b>搜索条件</b></h2>
+                    </div>
+                    <!--<div class="margin-20 col-md-4 col-sm-12 col-xs-12">-->
+                    <!--<div class="col-md-1"></div>-->
+                    <!--<div style="width: 10px;"> </div>-->
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style=" padding-left: 15px;">
+                        <div class="margin-20 col-md-4 col-sm-12 col-xs-12" >
+                            <!--<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 form-label"><label>应用系统</label></div>-->
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 form-label"
+                                 style="padding-right: 0px; padding-top: 16px;">
+                                <!--<label>-->
+                                    <span class="dash-label" style="font-weight: bold;">
+                                        <span class="auto-fit">应用系统 ：</span>
+                                    </span>
+                                <!--</label>-->
+                            </div>
+                            <div class="col-md-8  col-sm-8 col-xs-8" style="padding-left: 0px;">
+                                <ui-select ng-model="config.externalSystem" theme="bootstrap" append-to-body="true"
+                                           multiple="true" style="width: 98%;">
+                                    <ui-select-match>{{$item.sysName}}</ui-select-match>
+                                    <ui-select-choices repeat="item._id as item in externalSystems | filter: $select.search">
+                                        <div>{{item.sysName}}</div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <div class="margin-20 col-md-6 col-sm-12 col-xs-12" style="padding:0 0 0 0px;" >
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 form-label"
+                                 style="left:15px; padding-right: 15px; padding-top: 16px;">
+                                <!--<label>-->
+                                <span class="dash-label" style="font-weight: bold;">
+                                    <span class="auto-fit">Dashboard名称 ：</span>
+                                </span>
+                                <!--</label>-->
+                            </div>
+                            <div class="col-md-8 col-sm-8 col-xs-8"  style="left:0px;">
+                                <!--<input id="searchInput2" style="position: relative;left:5px;width:95%" type="text" class="form-control" ng-model="config.reportName" ng-keypress="($event.charCode==13)?submitForm():return" name="reportName" placeholder="默认查询全部报表">-->
+                                <input id="searchInput2" style="width:97%;padding-bottom:5px;margin-top: 2px;" type="text" class="form-control" ng-model="config.reportName" ng-keypress="" name="reportName"  placeholder="默认查询全部报表">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left: 0px;">
+                        <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                            <div class="margin-20 col-md-4 col-sm-12 col-xs-12"  ng-controller="DemoCtrl">
+                                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 form-label"
+                                     style="padding-right: 0px; padding-top: 16px;">
+                                    <!--<label>-->
+                                    <span class="dash-label" style="font-weight: bold;">
+                                        <span class="auto-fit2">创建人：</span>
+                                    </span>
+                                    <!--</label>-->
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-8 col-xs-8" style="padding-left: 0px;">
+                                    <!--<input id="searchInput3" style="width:95%;padding-bottom:5px;margin-top: 2px;" type="text" class="form-control" ng-model="" ng-keypress="" name="">-->
+                                    <!--<input>-->
+                                    <ui-select ng-model="config.createUser" theme="bootstrap" append-to-body="true"
+                                               multiple="true" style="width: 100%;">
+                                        <ui-select-match>
+                                            <!--<input autocomplete="on">-->
+                                            {{$item.Name}}
+                                            <!--</input>-->
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="item.Name as item in createUserNames | filter: $select.search">
+                                            <div>{{item.Name}}</div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <!--</input>-->
+                                </div>
+                            </div>
+
+                            <div class="margin-20 col-md-4 col-sm-12 col-xs-12" ng-controller="DemoCtrl">
+                                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 form-label"
+                                     style="padding-right: 0px; padding-top: 16px;">
+                                    <!--<label> -->
+                                    <span class="dash-label" style="font-weight: bold;">
+                                        <span class="auto-fit2">更新人：</span>
+                                    </span>
+                                    <!--</label>-->
+                                </div>
+                                <div class="col-lg7 col-md-7 col-sm-8 col-xs-8" style="padding-left: 0px; left:0px;">
+                                    <ui-select ng-model="config.updateUser" theme="bootstrap" append-to-body="true"
+                                               multiple="true" style="width: 100%;">
+                                        <ui-select-match>
+                                            {{$item.Name}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="item.Name as item in updateUserNames | filter: $select.search">
+                                            <div>{{item.Name}}</div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+
+                            <div class="margin-20 col-md-4 col-sm-12 col-xs-12"  ng-controller="SelectDropdown">
+                                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 form-label"
+                                     style="padding-right: 0px; padding-top: 16px;">
+                                    <!--<label>-->
+                                    <span class="dash-label" style="font-weight: bold;">
+                                        <span class="auto-fit2">激活状态：</span>
+                                    </span>
+                                    <!--</label>-->
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-8 col-xs-8" style="padding-left: 0px; left:0px;">
+                                    <!--<ui-select ng-model="config.activeStatus" theme="bootstrap" append-to-body="true"-->
+                                    <!--multiple="true" style="width: 128%;">-->
+                                    <!--<ui-select-match>{{$item.active}}</ui-select-match>-->
+                                    <!--<ui-select-choices repeat="item._id as item in activeStatuses">-->
+                                    <!--<div>{{item.active}}</div>-->
+                                    <!--</ui-select-choices>-->
+                                    <!--</ui-select>-->
+                                    <!--<input id="searchInputActive" style="width: 95%; padding-bottom: 5px; margin-top: 2px;"-->
+                                    <!--type="text" class="form-control" ng-model="config.active" ng-keypress="($event.charCode==13)?submitForm():return" name="active" placeholder="默认激活"/>-->
+                                    <select id="searchInputActive" style="width: 100%; padding-bottom: 5px; margin-top: 2px;"
+                                            ng-model="config.active" class="form-control" >
+                                        <option ng-repeat="act in activities" value="{{act.value}}">{{act.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="margin-20 col-md-2 col-sm-11 col-xs-11">
+                            <button type="button" class="btn btn-sm btn-primary float-r" style="margin-left:8px; height:35px;padding-bottom:5px;margin-top: 2px; width: 100px;"
+                                    ng-click="submitForm(searchForm)">查询</button>
+                        </div>
+                    </div>
+
+
+
+                </form>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <!--aaaaa-->
+                    <div class="btn-toolbar grid-toolbar" role="toolbar" style="background-color: #f2f2f2; margin-top: 30px; margin-bottom: -30px;">
+                        <div class="pull-right">
+                            <!--fa-copy-->
+                            <button type="button" id="copybutton" class="menu-btn fa fa-plus-circle" ng-click="copyDashboardConfigs()" style="background-color: #f2f2f2">
+                                复制
+                            </button>
+                            &nbsp
+                            <!--fa-paste-->
+                            <button type="button" class="menu-btn pasteIcon fa fa-clipboard" ng-click="focusTextarea()" style="background-color: #f2f2f2">
+                                粘贴
+                            </button>
+                            &nbsp
+                            <button type="button" class="menu-btn fa fa-minus-circle" ng-click="deleteDashboardConfigs()" style="background-color: #f2f2f2">
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    <div ui-grid="grid" ui-grid-selection ui-grid-cellnav ui-grid-resize-columns ui-grid-move-columns ui-grid-pagination style="margin-top:30px" class="grid-height" />
+                </div>
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" >
+                            <div class="modal-header"style="border-bottom: 0px;height:50px">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title" id="myModalLabel" style="text-align:center;">请勿关闭当前弹框并按ctrl+v进行粘贴</h4>
+                            </div>
+                            <textarea id="pasteText"  ng-model="myValue" ng-change="pasteDashboard()" style="position:absolute;top:-100px;width:100%;height:20px;overflow:hidden;resize:none;"></textarea>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
