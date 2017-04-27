@@ -111,7 +111,8 @@ var reportConfigSchema = mongoose.Schema({
     // adds.
     autoShow: Boolean,
     nameHide: Boolean,
-    active: Boolean
+    active: Boolean,
+    beAdjustable: Boolean
 });
 
 
