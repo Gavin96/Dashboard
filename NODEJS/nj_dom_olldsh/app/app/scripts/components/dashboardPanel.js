@@ -142,93 +142,92 @@ var app=angular.module('components') // do not specify dependency so that it wil
                         }
                         else {
                             $http.post('/runDashboard', params).then(function (data) {
-                                console.log(data);
-                                console.log(panelConfig.jsCustomizationCode);
-                                // 重现eval，将JS代码区域的操作应用使得将table中的数值数据转化成相应的图片
-                                var options = [];
-                                eval(panelConfig.jsCustomizationCode);
-                                console.log(data);
-                                options.forEach(function(option, index) {
-                                    if(option.show !== ""){
-                                        data.data.rows.forEach(function(data2, indexi){
-                                            // console.log(option);
-                                            data2[option.name] = option.func(data2[option.name]);
-                                            data2[option.name].show = option.show;
-                                        });
-                                    }
-                                });
-                                console.log(data.data.rows);
-                                var keys = [];
-                                // console.log(data.data.rows[0]);
-                                console.log(keys);
-                                for ( var tempq in data.data.rows[0]) {
-                                    if ( tempq != "maxrownumber" && tempq != "rn") {
-                                        if ( data.data.rows[0][tempq]!= null) {
-                                            keys.push({
-                                                key:tempq,      // 获取列名，并赋值给keys[]
-                                                show:data.data.rows[0][tempq]["show"]||"orign"                                               
+
+
+                                //alert(panelConfig.datasource);
+                                if (panelConfig.chartType == '表格 Table' || panelConfig.chartType == '红绿灯表格 Table2') {
+                                    // 重现eval，将JS代码区域的操作应用使得将table中的数值数据转化成相应的图片
+                                    var options = [];
+                                    eval(panelConfig.jsCustomizationCode);
+
+                                    options.forEach(function(option, index) {
+                                        if(option.show !== ""){
+                                            data.data.rows.forEach(function(data2, indexi){
+                                                // console.log(option);
+                                                data2[option.name] = option.func(data2[option.name]);
+                                                data2[option.name].show = option.show;
                                             });
                                         }
-                                    }
-                                } // 获取键值，将列名显示出来
-                                console.log(keys);
+                                    });
 
-                                function gebstable( arows, keys) {
-
-                                    $scope.workspaces = [];
-                                    $scope.workspaces.push({ name: 'Workspace 1'});
-                                    $scope.workspaces.push({ name: 'Workspace 2'});
-                                    $scope.workspaces.push({ name: 'Workspace 3'});
-                                    function makeRows(colData, arows, keys){
-                                        var rows = [];
-                                        var temobj = {};
-                                        for ( var i = 0; i < arows.length; i++){
-                                            temobj = {index:i};
-                                            for( var j = 0; j < keys.length; j++){
-                                                temobj[keys[j].key] = arows[i][keys[j].key];
-                                                // 将行的值赋值到temobj这个结构体
+                                    var keys = [];
+                                    for ( var tempq in data.data.rows[0]) {
+                                        if ( tempq != "maxrownumber" && tempq != "rn") {
+                                            if ( data.data.rows[0][tempq]!= null) {
+                                                keys.push({
+                                                    key:tempq,      // 获取列名，并赋值给keys[]
+                                                    show:data.data.rows[0][tempq]["show"]||"orign"
+                                                });
                                             }
-                                            rows.push($.extend(temobj, colData));
-                                            // 再将temobj这个结构体中的值赋值到rows中，以备展示
                                         }
-                                        // console.log(rows);
-                                        return rows;
-                                    }
-                                    $scope.workspaces.forEach(function ( wk, index) {
-                                        var colData = { workspace: wk.name};
-                                        wk.rows = makeRows( colData, arows, keys);
-                                        wk.bsTableControl = {
-                                            options: {
-                                                data: wk.rows,
-                                                rowStyle: function( row, index){
-                                                    return { classes: 'none'};
-                                                },
-                                                cache: false,
-                                                height: 500,
-                                                striped: true,
-                                                pagination: true,
-                                                pageSize: 7,
-                                                pageList: [5, 10, 25, 50, 100, 200],
-                                                search: true,
-                                                showColumns: true,
-                                                showRefresh: true,
-                                                minimumCountColumns: 2,
-                                                clickToSelect: false,
-                                                showToggle: false,
-                                                maintainSelected: false,
-                                                searchAlign:'left',
-                                                columns: [ {
-                                                    field: 'index',
-                                                    title: '#',
-                                                    align: 'center',
-                                                    valign: 'middle',
-                                                    sortable: true
-                                                }]
-                                            }
-                                        };
+                                    } // 获取键值，将列名显示出来
 
-                                        for ( var i = 0; i < keys.length; i++){
-                                            var tempobj = {align : 'center', valign: 'middle', sortable: true};
+                                    function gebstable( arows, keys) {
+
+                                        $scope.workspaces = [];
+                                        $scope.workspaces.push({ name: 'Workspace 1'});
+                                        $scope.workspaces.push({ name: 'Workspace 2'});
+                                        $scope.workspaces.push({ name: 'Workspace 3'});
+                                        function makeRows(colData, arows, keys){
+                                            var rows = [];
+                                            var temobj = {};
+                                            for ( var i = 0; i < arows.length; i++){
+                                                temobj = {index:i};
+                                                for( var j = 0; j < keys.length; j++){
+                                                    temobj[keys[j].key] = arows[i][keys[j].key];
+                                                    // 将行的值赋值到temobj这个结构体
+                                                }
+                                                rows.push($.extend(temobj, colData));
+                                                // 再将temobj这个结构体中的值赋值到rows中，以备展示
+                                            }
+                                            // console.log(rows);
+                                            return rows;
+                                        }
+                                        $scope.workspaces.forEach(function ( wk, index) {
+                                            var colData = { workspace: wk.name};
+                                            wk.rows = makeRows( colData, arows, keys);
+                                            wk.bsTableControl = {
+                                                options: {
+                                                    data: wk.rows,
+                                                    rowStyle: function( row, index){
+                                                        return { classes: 'none'};
+                                                    },
+                                                    cache: false,
+                                                    height: 500,
+                                                    striped: true,
+                                                    pagination: true,
+                                                    pageSize: 7,
+                                                    pageList: [5, 10, 25, 50, 100, 200],
+                                                    search: true,
+                                                    showColumns: true,
+                                                    showRefresh: true,
+                                                    minimumCountColumns: 2,
+                                                    clickToSelect: false,
+                                                    showToggle: false,
+                                                    maintainSelected: false,
+                                                    searchAlign:'left',
+                                                    columns: [ {
+                                                        field: 'index',
+                                                        title: '#',
+                                                        align: 'center',
+                                                        valign: 'middle',
+                                                        sortable: true
+                                                    }]
+                                                }
+                                            };
+
+                                            for ( var i = 0; i < keys.length; i++){
+                                                var tempobj = {align : 'center', valign: 'middle', sortable: true};
                                                 if ( keys[i].show == "icon" ){
                                                     tempobj.formatter = (function (i) {
                                                         // console.log(i);
@@ -243,30 +242,32 @@ var app=angular.module('components') // do not specify dependency so that it wil
                                                         }
                                                     })(i);
                                                 }
-                                            tempobj.field = keys[i].key;
-                                            tempobj.title = keys[i].key.toUpperCase();
-                                            wk.bsTableControl.options.columns.push(tempobj);
-                                        }
-                                    });
+                                                tempobj.field = keys[i].key;
+                                                tempobj.title = keys[i].key.toUpperCase();
+                                                wk.bsTableControl.options.columns.push(tempobj);
+                                            }
+                                        });
 
-                                    $scope.changeCurrentWorkspace = function (wk) {
-                                        $scope.currentWorkspace = wk;
-                                    };  // 转换工作的区域
-                                    $scope.currentWorkspace = $scope.workspaces[0];
-                                }
-                                gebstable(data.data.rows, keys);
+                                        $scope.changeCurrentWorkspace = function (wk) {
+                                            $scope.currentWorkspace = wk;
+                                        };  // 转换工作的区域
+                                        $scope.currentWorkspace = $scope.workspaces[0];
+                                    }
+                                    gebstable(data.data.rows, keys);
 
 
 
-                                data = data.data;
-                                $scope.resultData = data;
-                                //alert(panelConfig.datasource);
-                                if (panelConfig.chartType == '表格 Table' || '红绿灯表格 Table2') {
+                                    data = data.data;
+                                    $scope.resultData = data;
+
                                     upperCaseTableKeys($scope.resultData.rows);
                                     $scope.gridResult.data = $scope.resultData.rows;
                                     $scope.gridResult.totalItems = $scope.resultData.totalItemCount;
                                 }
                                 else if (panelConfig.chartType == '网页') {
+                                    data = data.data;
+                                    $scope.resultData = data;
+
                                     panelConfig.webpageUrl = 'http://' + panelConfig.webpageUrl;
                                     element.children().remove();
                                     element.append("<iframe id ='fr' width='100%' height='" + panelConfig.frame.height * 32 + "'></iframe>");
@@ -274,6 +275,9 @@ var app=angular.module('components') // do not specify dependency so that it wil
                                     $('#fr').attr("id", "fr");
                                 }
                                 else if (panelConfig.chartType == '标签') {
+                                    data = data.data;
+                                    $scope.resultData = data;
+
                                     var labelData = $scope.resultData.rows;
                                     var label = panelConfig.jsCustomizationCode;
                                     var array = label.match(/#\w+/g);
