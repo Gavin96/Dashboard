@@ -100,7 +100,7 @@
 <body style="overflow-x: hidden;padding-bottom: 20px;">
 
 <div style="overflow: visible;margin-left: auto;margin-right: auto;margin-top: 10px;">
-    <div ng-class="{'layout-lock-button': true, 'layout-lock-button-locked': ! movable, 'layout-lock-button-unlocked': movable}" ng-click="switchLock()"></div>
+    <div id="lockShow" ng-class="{'layout-lock-button': true, 'layout-lock-button-locked': ! movable, 'layout-lock-button-unlocked': movable}" ng-click="switchLock()"></div>
     <spinner name="mySpinner"  img-src="/img/spinner.gif" style="position:absolute;width:100%;height:100%;z-index: 99;text-align: center;"></spinner>
     <h1 style="text-align: center;" id="reportNameHide">{{dashboardConfig.reportName}}</h1>
     <div class="col-md-12 col-lg-12 col-sm-12 dashboard-panel" style="word-wrap: break-word;margin-bottom:20px;border-bottom:#cccccc solid 1px;">
@@ -118,14 +118,17 @@
     </div>
     <hr style="border-top:1px solid #ccc">
     <div class="col-md-12 col-lg-12 col-sm-12 dashboard-container">
+        <!--<div gridstack="gridstack" class="grid-stack grid1" options="options">-->
         <div gridstack="gridstack" class="grid-stack grid1" options="options">
             <div gridstack-item ng-repeat="w in dashboardConfig.panels"
-                 class="grid-stack-item" gs-item-x="w.frame.x" gs-item-y="w.frame.y"
+                 gs-item-x="w.frame.x" gs-item-y="w.frame.y"
                  gs-item-width="w.frame.width" gs-item-height="w.frame.height"
                  gs-item-autopos="0">
-                <div class="grid-stack-item-content" style="display: flex;flex-direction: column;overflow-y: hidden;">
+                 <!--class="grid-stack-item" gs-item-x="w.frame.x" gs-item-y="w.frame.y"-->
+                <div class="grid-stack-item-content" id="chartBorderHide" style="display: flex;flex-direction: column;overflow-y: hidden;">
                     <!--Set height to hide scrollbar-->
                     <!--x:{{w.frame.x}},y:{{w.frame.y}},w:{{w.frame.width}},h:{{w.frame.height}},{{w._id}}-->
+                    <!--aaaaaa-->
                     <dashboard-panel
                             dashboard-config="dashboardConfig"
                             panel-config="w"
@@ -142,7 +145,14 @@
 </div>
 </div>
 </div>
+
 </body>
+
+<script>
+        if(!dashboardConfig.beAdjustable){
+            document.getElementById("chartBorderHide").style.cssText = "display: flex;flex-direction: column;overflow-y: hidden; border:hidden;";
+        }
+</script>
 </html>
 
 
