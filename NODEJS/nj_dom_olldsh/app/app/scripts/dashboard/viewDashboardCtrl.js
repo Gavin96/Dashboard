@@ -8,40 +8,30 @@ angular.module('viewDashboardApp', [
         'ui.grid', 'ui.grid.edit', 'ui.grid.selection', 'ui.grid.cellNav', 'ui.grid.resizeColumns', 'ui.grid.moveColumns',
         'gridstack-angular', 'components', 'ui.date',
         'ngDialog','ui.grid.pagination','angularSpinners','bsTable'])
+    // 你在这行引入了bsTable的模块，和你临走前写给我的小纸条上不一样，小纸条说引入bsTable是在dashboardviewctrl.js实现的，但是在那里我并不能找到，却在这里找到了
     .controller('viewDashboardCtrl', ['$scope', '$http', 'toastr', 'ngDialog', 'conditionInputValidator',
         function ($scope, $http, toastr, ngDialog, conditionInputValidator) {
 
             $scope.dashboardConfig = window.dashboardConfig || {panels: []};
             
             $scope.disableGlobalBtn = false;
-            // add. $scope.disableGlobalBtn = true;
-            // true 代表 “搜索全部” 按钮不可用。
-
-
-            // 设置，使得打开图标界面的时候自动加载图像，即相当于自动执行一次搜索指令。
-            // $(window).load(function(){
-            //     document.getElementById("allClick").click();
-            //     // $scope.changeCurrentWorkspace($scope.workspaces[0]);
-            //     $scope.$apply();
-            // })
 
             // 将自动加载图表功能和前端checkbox的值绑定到一起
-            $scope.$watch('dashboardConfig.autoShow', function(){
-                // console.log($scope.dashboardConfig.autoShow);
+            // $scope.$watch('dashboardConfig.autoShow', function(){
                 if($scope.dashboardConfig.autoShow){
                     $(window).load(function(){
                         document.getElementById("allClick").click();
-                        // $scope.changeCurrentWorkspace($scope.workspaces[0]);
                         $scope.$apply();
                     })
                 }
-            })
+            // })
             // ends
-                
+
             // console.log(dashboardConfig.nameHide);
-            $scope.$watch('dashboardConfig.nameHide', function{
+            $scope.$watch('dashboardConfig.nameHide', function(){
                 if($scope.dashboardConfig.nameHide){
-                   document.getElementById("reportNameHide").style.display="none";
+                    // document.getElementById("reportNameHide").style.display="none";
+                    document.getElementById("reportNameHide").style.cssText = "display: none";
                 }
             })
 
@@ -62,9 +52,23 @@ angular.module('viewDashboardApp', [
             $scope.switchLock = function(){
                 $scope.movable= !$scope.movable;
                 var grid = $('.grid-stack').data('gridstack');
-                grid.movable('.grid-stack-item', $scope.movable);
-                grid.resizable('.grid-stack-item', $scope.movable);
+                grid.movable('.grid-stack-item', $scope.movable);  // set the chart movable or not (false:can't move)
+                grid.resizable('.grid-stack-item', $scope.movable);  // set the chart resizable or not
             };
+
+            $(window).load(function(){
+                if(!$scope.dashboardConfig.beAdjustable){
+                    document.getElementById("lockShow").className = "layout-lock-button layout-lock-button-locked";
+                    document.getElementById("lockShow").style.cssText = "display: none;";
+                    var grid = $('.grid-stack').data('gridstack');
+                    grid.movable('.grid-stack-item', false);   // set the chart can't be movable
+                    // grid.movable('.grid-stack-item', $scope.movable);
+                    grid.resizable('.grid-stack-item', false);  // set the chart cantresizable or not
+                    // document.getElementsByClassName("ui-resizable-handle").style.cssText = "display:none";
+                }
+            });
+
+            var grid = $('.grid-stack').data('gridstack');
 
             setTimeout(function(){
                 if($scope.dashboardConfig.panels.length == 1){
