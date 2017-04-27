@@ -16,11 +16,13 @@
     </div>
     <spinner img-src="/img/spinner.gif" style="position:absolute;left:45%;top:35%;z-index: 1000;"></spinner>
     <!--Set height to hide scrollbar-->
-    <div style="display: flex;flex-direction: column;flex-grow:1; overflow-x:hidden;overflow-y:auto; " class="content-panel">
-        <div  ui-grid="gridResult" ng-if="panelConfig.chartType =='表格 Table'" ui-grid-resize-columns ui-grid-move-columns ui-grid-pagination style="position:relative; height:100%;width:100%;">
+    <!--<div style="display: flex;flex-direction: column;flex-grow:1;" class="content-panel">-->
+    <div style="display: flex;flex-direction: column; flex-grow:1; overflow: hidden;" class="content-panel">
+        <div  ui-grid="gridResult" ng-if="panelConfig.chartType =='表格 Table'" ui-grid-resize-columns
+              ui-grid-move-columns ui-grid-pagination style="position:relative; height:100%; width:100%;">
         </div>
-         <!--define bs table-->
-        <div style="position:relative; height:500px; width:100%;" ng-if="panelConfig.chartType =='红绿灯表格 Table2'">
+         <!--bs table-->
+        <div style="position:relative; height:100%; width:100%;" ng-if="panelConfig.chartType =='红绿灯表格 Table2'">
             <div class="workspaceContainer" ng-repeat="wk in workspaces" ng-show="currentWorkspace == wk">
                 <table bs-table-control="wk.bsTableControl"></table>
             </div>
