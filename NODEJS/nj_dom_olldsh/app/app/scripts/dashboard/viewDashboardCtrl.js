@@ -57,7 +57,7 @@ angular.module('viewDashboardApp', [
             };
 
             $(window).load(function(){
-                if(!$scope.dashboardConfig.beAdjustable){
+                if($scope.dashboardConfig.unAdjustable){
                     document.getElementById("lockShow").className = "layout-lock-button layout-lock-button-locked";
                     document.getElementById("lockShow").style.cssText = "display: none;";
                     var grid = $('.grid-stack').data('gridstack');
